@@ -11,6 +11,7 @@ namespace Videobutik1.Controllers
     public class VideoStoreController : Controller
     {
         MovieContext dbMovies = new MovieContext();
+        CustomerContext dbCustomers = new CustomerContext();
 
         // GET: VideoStore
         public ActionResult Index()
@@ -27,12 +28,9 @@ namespace Videobutik1.Controllers
 
         public ActionResult ListCustomers()
         {
-            List<CustomerModel> customerList = new List<CustomerModel>();
-            customerList.Add(new CustomerModel { CustomerId = 1, Name = "Stina Jönsdotter", Address = "Storgatan 1, 12345 Småstad", PhoneNo = "070-1234567" });
+            var customers = dbCustomers.Customers.ToList();
 
-            customerList.Add(new CustomerModel { CustomerId = 2, Name = "Jöns Stinasson", Address = "Storgatan 1, 12345 Småstad", PhoneNo = "070-1234567" });
-
-            return View(customerList);
+            return View(customers);
         }
 
         public ActionResult ListRentals()
@@ -51,10 +49,29 @@ namespace Videobutik1.Controllers
             return View(rentalList);
         }
 
-        public ActionResult CreateCustomer(int customerId)
+        public ActionResult CreateCustomer()
         {
-            return View(new CustomerModel { CustomerId = customerId });
+
+            return View();
+
         }
+
+        [HttpPost]
+        public ActionResult CreateCustomer(CustomerModel customer)
+        {
+            try
+            {
+                dbCustomers.Customers.Add(customer);
+                dbCustomers.SaveChanges();
+                return RedirectToAction("ListCustomers");
+            }
+            catch
+            {
+                return View();
+            }
+
+        }
+
 
         public ActionResult CreateMovie()
         {
@@ -77,9 +94,44 @@ namespace Videobutik1.Controllers
             }
         }
 
-        public ActionResult EditMovie(int movieId, string name, string director, string genre, int lengthMinutes, int year)
+        public ActionResult EditMovie(MovieModel movie)
         {
-            return View(new MovieModel { MovieId = movieId, Name = name, Director = director, Genre = genre, LengthMinutes = lengthMinutes, Year = year });
+            return View(movie);
+        }
+
+        [HttpPost]
+        public ActionResult EditMovie(string dummy, MovieModel movie)
+        {
+            try
+            {
+                MovieModel editMovie;
+                using (var ctx = new MovieContext())
+                {
+                    editMovie = ctx.Movies.Where(m => m.MovieId == movie.MovieId).FirstOrDefault<MovieModel>();
+                }
+
+                if (editMovie != null)
+                {
+                    editMovie = movie;
+                }
+
+                //save modified entity using new Context
+                using (var ctx = new MovieContext())
+                {
+                    // Mark entity as modified
+                    ctx.Entry(editMovie).State = System.Data.Entity.EntityState.Modified;
+
+                    // call SaveChanges
+                    ctx.SaveChanges();
+                }
+
+                return RedirectToAction("ListMovies");
+            }
+            catch
+            {
+                return View();
+            }
+
         }
 
         // Adds a dummy parameter to invoke overloading
@@ -92,7 +144,7 @@ namespace Videobutik1.Controllers
         {
             try
             {
-// Need to instantiate a new context to make remove work
+                // Need to instantiate a new context to make remove work
                 using (var context = new MovieContext())
                 {
                     // Note: Attatch to the entity:
@@ -109,9 +161,65 @@ namespace Videobutik1.Controllers
         }
 
 
-        public ActionResult EditCustomer(int customerId, string name, string address, string phoneNo)
+        public ActionResult EditCustomer(CustomerModel customer)
         {
-            return View(new CustomerModel { CustomerId = customerId, Name = name, Address = address, PhoneNo = phoneNo });
+            return View(customer);
+        }
+
+        [HttpPost]
+        public ActionResult EditCustomer(string dummy,CustomerModel customer)
+        {
+            try
+            {
+                CustomerModel editCustomer;
+                using (CustomerContext ctx = new CustomerContext())
+                {
+                    editCustomer = ctx.Customers.Where(i => i.CustomerId == customer.CustomerId).FirstOrDefault<CustomerModel>();
+                }
+                if (editCustomer != null)
+                {
+                    editCustomer = customer;
+                }
+                using (CustomerContext newctx = new CustomerContext())
+                {
+                    // Mark entity as modified
+                    newctx.Entry(editCustomer).State = System.Data.Entity.EntityState.Modified;
+
+                    // call SaveChanges
+                    newctx.SaveChanges();
+                    return RedirectToAction("ListCustomers");
+                }
+            }
+            catch
+            {
+                return View(customer);
+            }
+        }
+
+        public ActionResult DeleteCustomer(string dummy,CustomerModel customer)
+        {
+            return View(customer);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteCustomer(CustomerModel customer)
+        {
+            try
+            {
+                // Need to instantiate a new context to make remove work
+                using (var context = new CustomerContext())
+                {
+                    // Note: Attatch to the entity:
+                    context.Customers.Attach(customer);
+                    context.Customers.Remove(customer);
+                    var nrOfObjectsChanged = context.SaveChanges();
+                    return RedirectToAction("ListCustomers");
+                }
+            }
+            catch
+            {
+                return View();
+            }
         }
     }
 }

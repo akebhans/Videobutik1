@@ -8,14 +8,10 @@
 <h2>ListCustomers</h2>
 
 <p>
-    @*@Model.Last().CustomerId*@
-    @Html.ActionLink("Create New", "CreateCustomer",new {customerId = Model.Last().CustomerId+1 },null)
+    @Html.ActionLink("Create New", "CreateCustomer")
 </p>
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.CustomerId)
-        </th>
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
@@ -31,9 +27,6 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.CustomerId)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.Name)
         </td>
         <td>
@@ -43,9 +36,9 @@
             @Html.DisplayFor(modelItem => item.PhoneNo)
         </td>
         <td>
-            @Html.ActionLink("Edit", "EditCustomer", new { customerId = item.CustomerId, name=item.Name, address=item.Address, phoneNo = item.PhoneNo}, null) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            @Html.ActionLink("Edit", "EditCustomer", item) |
+            @Html.ActionLink("Details", "Details", new { id=item.CustomerId }) |
+            @Html.ActionLink("Delete", "DeleteCustomer", item)
         </td>
     </tr>
 }
