@@ -10,8 +10,12 @@ namespace Videobutik1.Controllers
 {
     public class VideoStoreController : Controller
     {
-        MovieContext dbMovies = new MovieContext();
-        CustomerContext dbCustomers = new CustomerContext();
+        DB_Context context = new DB_Context();
+
+        //MovieContext dbMovies = new MovieContext();
+
+        //CustomerContext dbCustomers = new CustomerContext();
+        //RentalContext dbRentals = new RentalContext();
 
         // GET: VideoStore
         public ActionResult Index()
@@ -21,32 +25,57 @@ namespace Videobutik1.Controllers
 
         public ActionResult ListMovies()
         {
-            var movies = dbMovies.Movies.ToList();
+            var movies = context.Movies.ToList();
             return View(movies);
 
         }
 
         public ActionResult ListCustomers()
         {
-            var customers = dbCustomers.Customers.ToList();
+            var customers = context.Customers.ToList();
 
             return View(customers);
         }
 
         public ActionResult ListRentals()
         {
-            List<RentalModel> rentalList = new List<RentalModel>();
-            rentalList.Add(new RentalModel
+            var rentalList = context.Rentals.ToList();
+            var movieList = context.Movies.ToList();
+            var customerList = context.Customers.ToList();
+
+            var rentalquery = from Rentals in rentalList
+                              join Customers in customerList on Rentals.CustomerId equals Customers.CustomerId into RentalCustomers
+                              from item in RentalCustomers.DefaultIfEmpty(new CustomerModel { CustomerId = 0, Name = String.Empty })
+                              join Movies in movieList on Rentals.MovieId equals Movies.MovieId into RentalMovies
+                              from movieitems in RentalMovies.DefaultIfEmpty(new MovieModel { MovieId = 0, Name = string.Empty })
+                              select new
+                              {
+                                  RentalId = Rentals.RentalId,
+                                  MovieId = Rentals.MovieId,
+                                  Movie = movieitems.Name,
+                                  CustomerId = Rentals.CustomerId,
+                                  Customer = item.Name,
+                                  RentalDate = Rentals.RentalDate,
+                                  LastReturnDate = Rentals.LastReturnDate,
+                                  ActualReturnDate = Rentals.ActualReturnDate
+                              };
+
+            List<RentalListModel> rentalQueryList = new List<RentalListModel>();
+            foreach (var item in rentalquery)
             {
-                CustomerId = 1,
-                CustomerName = "Stina Jönsdotter",
-                LastReturnDate = new DateTime(2017, 12, 31),
-                MovieId = 2,
-                MovieTitle = "Ghostducks",
-                RentalDate = new DateTime(2017, 12, 1),
-                RentalId = 1
-            });
-            return View(rentalList);
+                RentalListModel rentalQuery = new RentalListModel();
+                rentalQuery.ActualReturnDate = item.ActualReturnDate;
+                rentalQuery.Customer = item.Customer;
+                rentalQuery.CustomerId = item.CustomerId;
+                rentalQuery.LastReturnDate = item.LastReturnDate;
+                rentalQuery.Movie = item.Movie;
+                rentalQuery.MovieId = item.MovieId;
+                rentalQuery.RentalDate = item.RentalDate;
+                rentalQuery.RentalId = item.RentalId;
+                rentalQueryList.Add(rentalQuery);
+            }
+
+            return View(rentalQueryList);
         }
 
         public ActionResult CreateCustomer()
@@ -61,8 +90,8 @@ namespace Videobutik1.Controllers
         {
             try
             {
-                dbCustomers.Customers.Add(customer);
-                dbCustomers.SaveChanges();
+                context.Customers.Add(customer);
+                context.SaveChanges();
                 return RedirectToAction("ListCustomers");
             }
             catch
@@ -83,8 +112,8 @@ namespace Videobutik1.Controllers
         {
             try
             {
-                dbMovies.Movies.Add(movie);
-                dbMovies.SaveChanges();
+                context.Movies.Add(movie);
+                context.SaveChanges();
 
                 return RedirectToAction("ListMovies");
             }
@@ -92,6 +121,14 @@ namespace Videobutik1.Controllers
             {
                 return View();
             }
+        }
+
+        public ActionResult CreateRental()
+        {
+            List<CustomerModel> customers = context.Customers.ToList();
+            List<MovieModel> movies = context.Movies.ToList();
+
+            return View();
         }
 
         public ActionResult EditMovie(MovieModel movie)
@@ -105,7 +142,7 @@ namespace Videobutik1.Controllers
             try
             {
                 MovieModel editMovie;
-                using (var ctx = new MovieContext())
+                using (var ctx = new DB_Context())
                 {
                     editMovie = ctx.Movies.Where(m => m.MovieId == movie.MovieId).FirstOrDefault<MovieModel>();
                 }
@@ -116,7 +153,7 @@ namespace Videobutik1.Controllers
                 }
 
                 //save modified entity using new Context
-                using (var ctx = new MovieContext())
+                using (var ctx = new DB_Context())
                 {
                     // Mark entity as modified
                     ctx.Entry(editMovie).State = System.Data.Entity.EntityState.Modified;
@@ -145,7 +182,7 @@ namespace Videobutik1.Controllers
             try
             {
                 // Need to instantiate a new context to make remove work
-                using (var context = new MovieContext())
+                using (var context = new DB_Context())
                 {
                     // Note: Attatch to the entity:
                     context.Movies.Attach(movie);
@@ -172,7 +209,7 @@ namespace Videobutik1.Controllers
             try
             {
                 CustomerModel editCustomer;
-                using (CustomerContext ctx = new CustomerContext())
+                using (DB_Context ctx = new DB_Context())
                 {
                     editCustomer = ctx.Customers.Where(i => i.CustomerId == customer.CustomerId).FirstOrDefault<CustomerModel>();
                 }
@@ -180,7 +217,7 @@ namespace Videobutik1.Controllers
                 {
                     editCustomer = customer;
                 }
-                using (CustomerContext newctx = new CustomerContext())
+                using (DB_Context newctx = new DB_Context())
                 {
                     // Mark entity as modified
                     newctx.Entry(editCustomer).State = System.Data.Entity.EntityState.Modified;
@@ -207,7 +244,7 @@ namespace Videobutik1.Controllers
             try
             {
                 // Need to instantiate a new context to make remove work
-                using (var context = new CustomerContext())
+                using (var context = new DB_Context())
                 {
                     // Note: Attatch to the entity:
                     context.Customers.Attach(customer);

@@ -148,8 +148,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Context\CustomerContext.cs" />
-    <Compile Include="Context\MovieContext.cs" />
+    <Compile Include="Context\DBContext.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\VideoStoreController.cs" />
     <Compile Include="Global.asax.cs">
@@ -211,6 +210,7 @@
     <Content Include="Views\VideoStore\EditCustomer.cshtml" />
     <Content Include="Views\VideoStore\DeleteMovie.cshtml" />
     <Content Include="Views\VideoStore\DeleteCustomer.cshtml" />
+    <Content Include="Views\VideoStore\CreateRental.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

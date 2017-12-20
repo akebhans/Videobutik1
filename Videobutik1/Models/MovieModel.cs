@@ -16,4 +16,5 @@ namespace Videobutik1.Models
         public string Director { get; set; }
         public string Genre { get; set; }
     }
+
 }
