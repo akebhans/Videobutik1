@@ -15,6 +15,12 @@ namespace Videobutik1.Models
         public int LengthMinutes { get; set; }
         public string Director { get; set; }
         public string Genre { get; set; }
+        public bool Rented { get; set; }
+
+        public MovieModel()
+        {
+            Rented = false;
+        }
     }
 
 }

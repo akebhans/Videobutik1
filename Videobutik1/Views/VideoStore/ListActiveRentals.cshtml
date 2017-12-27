@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Videobutik1.Models.RentalModel>
+
+@{
+    ViewBag.Title = "Active Rentals";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Active Rentals</h2>
+
+<!DOCTYPE html>
+
+<p>
+    @Html.ActionLink("New Rental", "CreateRental")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.MovieId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CustomerId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RentalDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ActualReturnDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastReturnDate)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.Action("RentalMovieDetails", new { MovieId = item.MovieId })
+        </td>
+        <td>
+            @Html.Action("RentalCustomerDetails", new { CustomerId = item.CustomerId })
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RentalDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ActualReturnDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastReturnDate)
+        </td>
+        @if (item.ActualReturnDate == null)
+        {
+            <td>
+                @Html.ActionLink("Return movie", "DeleteRental", item)
+            </td>
+        }
+    </tr>
+}
+
+</table>

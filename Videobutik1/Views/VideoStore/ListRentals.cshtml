@@ -1,55 +1,73 @@
 ﻿@using Videobutik1.Models
-@model IEnumerable<Videobutik1.Models.RentalListModel>
+@model IEnumerable<Videobutik1.Models.RentalModel>
 
 @{
-    ViewBag.Title = "ListRentals";
+    ViewBag.Title = "All Rentals";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Customer)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Movie)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RentalDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastReturnDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ActualReturnDate)
-        </th>
-        <th></th>
-    </tr>
+<h2>All Rentals</h2>
 
-    @foreach (var item in Model)
-    {
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>RentalCustomerDetails</title>
+</head>
+<body>
+
+    <p>
+        @Html.ActionLink("New Rental", "CreateRental")
+    </p>
+
+
+    <table class="table">
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Movie)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RentalDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastReturnDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ActualReturnDate)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "EditCustomer", item) |
-                @Html.ActionLink("Details", "Details", new { id = item.CustomerId }) |
-                @Html.ActionLink("Delete", "DeleteCustomer", item)
-            </td>
+            <th>
+                <p>Movie</p>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RentalDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastReturnDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActualReturnDate)
+            </th>
+            <th>
+                <p>Customer Name</p>
+            </th>
+            <th></th>
         </tr>
-    }
 
-</table>
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.Action("RentalMovieDetails", new { MovieId = item.MovieId })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RentalDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastReturnDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ActualReturnDate)
+                </td>
+                <td>
+                    @Html.Action("RentalCustomerDetails", new { CustomerId = item.CustomerId })
+                </td>
+                @if (item.ActualReturnDate == null)
+                {
+                    <td>
+                        @Html.ActionLink("Return movie", "DeleteRental", item)
+                    </td>
+                }
+
+            </tr>
+}
+    </table>
+</body>
+</html>

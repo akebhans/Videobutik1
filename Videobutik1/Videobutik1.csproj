@@ -184,6 +184,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Views\VideoStore\RentalCustomerDetails.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -211,6 +212,10 @@
     <Content Include="Views\VideoStore\DeleteMovie.cshtml" />
     <Content Include="Views\VideoStore\DeleteCustomer.cshtml" />
     <Content Include="Views\VideoStore\CreateRental.cshtml" />
+    <Content Include="Views\VideoStore\RentalMovieDetails.cshtml" />
+    <Content Include="Views\VideoStore\NewCustomerRental.cshtml" />
+    <Content Include="Views\VideoStore\DeleteRental.cshtml" />
+    <Content Include="Views\VideoStore\ListActiveRentals.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

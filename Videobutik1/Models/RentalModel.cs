@@ -14,17 +14,17 @@ namespace Videobutik1.Models
 
         public int CustomerId { get; set; }
 
-        public DateTime RentalDate { get; set; }
+        public string RentalDate { get; set; }
 
-        public DateTime ActualReturnDate { get; set; }
+        public string ActualReturnDate { get; set; }
 
-        public DateTime LastReturnDate { get; set; }
+        public string LastReturnDate { get; set; }
+
+        public RentalModel()
+        {
+            RentalDate = DateTime.Today.ToString();
+        }
 
     }
 
-    public class RentalListModel : RentalModel
-    {
-        public string Movie { get; set; }
-        public string Customer { get; set; }
-    }
 }

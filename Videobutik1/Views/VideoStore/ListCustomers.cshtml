@@ -1,11 +1,12 @@
-﻿@model IEnumerable<Videobutik1.Models.CustomerModel>
+﻿@using Videobutik1.Models
+@model IEnumerable<Videobutik1.Models.CustomerModel>
 
 @{
     ViewBag.Title = "ListCustomers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>ListCustomers</h2>
+<h2>Customers</h2>
 
 <p>
     @Html.ActionLink("Create New", "CreateCustomer")
@@ -37,9 +38,9 @@
         </td>
         <td>
             @Html.ActionLink("Edit", "EditCustomer", item) |
-            @Html.ActionLink("Details", "Details", new { id=item.CustomerId }) |
-            @Html.ActionLink("Delete", "DeleteCustomer", item)
-        </td>
+            @Html.ActionLink("Delete", "DeleteCustomer", item) |
+            @Html.ActionLink("New Rental", "NewCustomerRental", new {CustomerId = item.CustomerId})
+        </td> 
     </tr>
 }
 

@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>ListMovies</h2>
+<h2>Movies</h2>
 
 <p>
     @Html.ActionLink("Create New", "CreateMovie")
@@ -26,6 +26,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Genre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rented)
         </th>
         <th></th>
     </tr>
@@ -48,8 +51,10 @@
             @Html.DisplayFor(modelItem => item.Genre)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.Rented)
+        </td>
+        <td>
             @Html.ActionLink("Edit", "EditMovie", item) |
-            @Html.ActionLink("Details", "Details", new { id=item.MovieId }) |
             @Html.ActionLink("Delete", "DeleteMovie", item)
         </td>
     </tr>
