@@ -9,7 +9,7 @@
 <h2>Customers</h2>
 
 <p>
-    @Html.ActionLink("Create New", "CreateCustomer")
+    @Html.ActionLink("Add New Customer", "CreateCustomer")
 </p>
 <table class="table">
     <tr>
@@ -39,7 +39,9 @@
         <td>
             @Html.ActionLink("Edit", "EditCustomer", item) |
             @Html.ActionLink("Delete", "DeleteCustomer", item) |
-            @Html.ActionLink("New Rental", "NewCustomerRental", new {CustomerId = item.CustomerId})
+            @Html.ActionLink("New Rental", "NewCustomerRental", new {CustomerId = item.CustomerId}) |
+            @Html.ActionLink("My Active Rentals", "ListCustActiveRentals", new { CustomerId = item.CustomerId }) |
+            @Html.ActionLink("All My Rentals", "ListCustRentals", new { CustomerId = item.CustomerId }) |
         </td> 
     </tr>
 }

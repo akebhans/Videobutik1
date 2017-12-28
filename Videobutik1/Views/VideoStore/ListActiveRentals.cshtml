@@ -31,8 +31,11 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
+@foreach (var item in Model)
+{
+    string warningcolor = "";
+    if (item.ActualReturnDate == null && DateTime.Parse(item.LastReturnDate) < DateTime.Today) {warningcolor = "red";}
+    <tr style="background-color: @warningcolor">
         <td>
             @Html.Action("RentalMovieDetails", new { MovieId = item.MovieId })
         </td>

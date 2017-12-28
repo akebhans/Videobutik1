@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Videobutik1.Models.RentalModel>
+
+@{
+    ViewBag.Title = "ListCustRentals";
+}
+
+@if (!Model.Any())
+{
+    <h2>No rentals for this customer!</h2>
+}
+else
+{
+    <h2>
+        All Rentals for
+        @Html.Action("RentalCustomerDetails", new {CustomerId = Model.First().CustomerId})
+    </h2>
+    <table class="table">
+        <tr>
+            <th>
+                <p>Movie</p>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RentalDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActualReturnDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastReturnDate)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            string warningcolor = "";
+            if (((item.ActualReturnDate == null && DateTime.Parse(item.LastReturnDate) < DateTime.Today)) || ((item.ActualReturnDate != null) && (DateTime.Parse(item.LastReturnDate)<DateTime.Parse(item.ActualReturnDate) )))  
+            {
+                warningcolor = "red";
+            }
+            <tr style="background-color: @warningcolor">
+
+                <td>
+                    @Html.Action("RentalMovieDetails", new {MovieId = item.MovieId})
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RentalDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ActualReturnDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastReturnDate)
+                </td>
+                @if (item.ActualReturnDate == null)
+                {
+                    <td>
+                        @Html.ActionLink("Return movie", "DeleteRental", item)
+                    </td>
+                }
+            </tr>
+        }
+
+    </table>
+}

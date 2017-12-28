@@ -44,40 +44,13 @@ namespace Videobutik1.Controllers
         public ActionResult ListRentals()
         {
             var rentalList = context.Rentals.ToList();
-            //var movieList = context.Movies.ToList();
-            //var customerList = context.Customers.ToList();
 
-            //var rentalquery = from Rentals in rentalList
-            //                  join Customers in customerList on Rentals.CustomerId equals Customers.CustomerId into RentalCustomers
-            //                  from item in RentalCustomers.DefaultIfEmpty(new CustomerModel { CustomerId = 0, Name = String.Empty })
-            //                  join Movies in movieList on Rentals.MovieId equals Movies.MovieId into RentalMovies
-            //                  from movieitems in RentalMovies.DefaultIfEmpty(new MovieModel { MovieId = 0, Name = string.Empty })
-            //                  select new
-            //                  {
-            //                      RentalId = Rentals.RentalId,
-            //                      MovieId = Rentals.MovieId,
-            //                      Movie = movieitems.Name,
-            //                      CustomerId = Rentals.CustomerId,
-            //                      Customer = item.Name,
-            //                      RentalDate = Rentals.RentalDate,
-            //                      LastReturnDate = Rentals.LastReturnDate,
-            //                      ActualReturnDate = Rentals.ActualReturnDate
-            //                  };
+            return View(rentalList);
+        }
 
-            //List<RentalListModel> rentalQueryList = new List<RentalListModel>();
-            //foreach (var item in rentalquery)
-            //{
-            //    RentalListModel rentalQuery = new RentalListModel();
-            //    rentalQuery.ActualReturnDate = item.ActualReturnDate;
-            //    rentalQuery.Customer = item.Customer;
-            //    rentalQuery.CustomerId = item.CustomerId;
-            //    rentalQuery.LastReturnDate = item.LastReturnDate;
-            //    rentalQuery.Movie = item.Movie;
-            //    rentalQuery.MovieId = item.MovieId;
-            //    rentalQuery.RentalDate = item.RentalDate;
-            //    rentalQuery.RentalId = item.RentalId;
-            //    rentalQueryList.Add(rentalQuery);
-            //}
+        public ActionResult ListRentals()
+        {
+            var rentalList = context.Rentals.ToList();
 
             return View(rentalList);
         }
@@ -89,13 +62,62 @@ namespace Videobutik1.Controllers
 
             foreach (var item in rentalList)
             {
-                if (item.ActualReturnDate==null)
+                if (item.ActualReturnDate == null)
                 {
                     activeRentalList.Add(item);
                 }
             }
 
             return View(activeRentalList);
+        }
+
+        public ActionResult ListCustActiveRentals(int customerId)
+        {
+            var rentalList = context.Rentals.ToList();
+            List<RentalModel> activeRentalList = new List<RentalModel>();
+
+            foreach (var item in rentalList)
+            {
+                if (item.ActualReturnDate == null && item.CustomerId==customerId)
+                {
+                    activeRentalList.Add(item);
+                }
+            }
+
+            return View(activeRentalList);
+        }
+
+        public ActionResult ListCustRentals(int customerId)
+        {
+            var rentalList = context.Rentals.ToList();
+            List<RentalModel> myRentalList = new List<RentalModel>();
+
+            foreach (var item in rentalList)
+            {
+                if (item.CustomerId == customerId)
+                {
+                    myRentalList.Add(item);
+                }
+            }
+
+            return View(myRentalList);
+        }
+
+        public ActionResult ListMovieRentals(int movieId)
+        {
+            var rentalList = context.Rentals.ToList();
+            List<RentalModel> myRentalList = new List<RentalModel>();
+
+            foreach (var item in rentalList)
+            {
+                if (item.MovieId == movieId)
+                {
+                    myRentalList.Add(item);
+                }
+            }
+
+            myRentalList.Sort((x, y) => y.RentalDate.CompareTo(x.RentalDate));
+            return View(myRentalList);
         }
 
         [ChildActionOnly]
@@ -162,10 +184,10 @@ namespace Videobutik1.Controllers
             List<MovieModel> myMovies = new List<MovieModel>();
             foreach (var item in context.Movies)
             {
-                if (! item.Rented) myMovies.Add(item);
+                if (!item.Rented) myMovies.Add(item);
             }
 
-            if (myMovies.Count == 0) myMovies.Add(new MovieModel() {MovieId = 0, Name = "NO MOVIES AVAILABLE!!"});
+            if (myMovies.Count == 0) myMovies.Add(new MovieModel() { MovieId = 0, Name = "NO MOVIES AVAILABLE!!" });
             ViewBag.ListCustomers = context.Customers;
             ViewBag.ListMovies = myMovies;
             return View();
@@ -174,19 +196,28 @@ namespace Videobutik1.Controllers
         [HttpPost]
         public ActionResult CreateRental(RentalModel rental)
         {
-            try
+            if (rental.CustomerId == 0 || rental.MovieId == 0)
             {
-                rental.RentalDate = DateTime.Today.ToShortDateString();
-                rental.LastReturnDate = DateTime.Today.AddDays(14).ToShortDateString();
-                context.Rentals.Add(rental);
-                context.Movies.Find(rental.MovieId).Rented = true;
-                context.SaveChanges();
-
-                return RedirectToAction("ListRentals");
-            }
-            catch
-            {
+                ViewBag.UserMsg = "Both customer and movie must be declared!";
                 return View();
+            }
+            else
+            {
+                try
+                {
+                    rental.RentalDate = DateTime.Today.ToShortDateString();
+                    rental.LastReturnDate = DateTime.Today.AddDays(context.Movies.Find(rental.MovieId).RentalPeriodDays).ToShortDateString();
+                    context.Rentals.Add(rental);
+                    context.Movies.Find(rental.MovieId).Rented = true;
+                    context.SaveChanges();
+
+                    return RedirectToAction("ListRentals");
+                }
+                catch
+                {
+                    return View();
+                }
+
             }
         }
 
@@ -210,6 +241,8 @@ namespace Videobutik1.Controllers
         {
             try
             {
+                custRental.RentalDate = DateTime.Today.ToShortDateString();
+                custRental.LastReturnDate = DateTime.Today.AddDays(context.Movies.Find(custRental.MovieId).RentalPeriodDays).ToShortDateString();
                 context.Rentals.Add(custRental);
                 context.Movies.Find(custRental.MovieId).Rented = true;
                 context.SaveChanges();
@@ -266,6 +299,18 @@ namespace Videobutik1.Controllers
         // Adds a dummy parameter to invoke overloading
         public ActionResult DeleteMovie(string dummy, MovieModel movie)
         {
+            bool hasActiveRental = false;
+
+            foreach (var item in context.Rentals)
+            {
+                if (item.MovieId == movie.MovieId && item.ActualReturnDate == null)
+                {
+                    hasActiveRental = true;
+                }
+            }
+
+            ViewBag.HasActiveRental = hasActiveRental;
+
             return View(movie);
         }
         [HttpPost]
@@ -327,6 +372,18 @@ namespace Videobutik1.Controllers
 
         public ActionResult DeleteCustomer(string dummy, CustomerModel customer)
         {
+            bool hasActiveRental = false;
+
+            foreach (var item in context.Rentals)
+            {
+                if (item.CustomerId == customer.CustomerId && item.ActualReturnDate == null)
+                {
+                    hasActiveRental = true;
+                }
+            }
+
+            ViewBag.HasActiveRental = hasActiveRental;
+
             return View(customer);
         }
 

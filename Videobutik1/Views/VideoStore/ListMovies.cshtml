@@ -8,7 +8,7 @@
 <h2>Movies</h2>
 
 <p>
-    @Html.ActionLink("Create New", "CreateMovie")
+    @Html.ActionLink("Add New Movie", "CreateMovie")
 </p>
 <table class="table">
     <tr>
@@ -26,6 +26,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Genre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RentalPeriodDays)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Rented)
@@ -51,11 +54,15 @@
             @Html.DisplayFor(modelItem => item.Genre)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.RentalPeriodDays)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.Rented)
         </td>
         <td>
             @Html.ActionLink("Edit", "EditMovie", item) |
-            @Html.ActionLink("Delete", "DeleteMovie", item)
+            @Html.ActionLink("Delete", "DeleteMovie", item) |
+            @Html.ActionLink("Rentals of "+item.Name, "ListMovieRentals", new { MovieId = item.MovieId })
         </td>
     </tr>
 }

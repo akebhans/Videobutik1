@@ -216,6 +216,9 @@
     <Content Include="Views\VideoStore\NewCustomerRental.cshtml" />
     <Content Include="Views\VideoStore\DeleteRental.cshtml" />
     <Content Include="Views\VideoStore\ListActiveRentals.cshtml" />
+    <Content Include="Views\VideoStore\ListCustActiveRentals.cshtml" />
+    <Content Include="Views\VideoStore\ListCustRentals.cshtml" />
+    <Content Include="Views\VideoStore\ListMovieRentals.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
