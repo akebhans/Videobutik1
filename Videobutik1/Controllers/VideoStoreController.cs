@@ -4,6 +4,7 @@ using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net.Mime;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using Videobutik1.Context;
@@ -41,19 +42,63 @@ namespace Videobutik1.Controllers
             return View(customers);
         }
 
-        public ActionResult ListRentals()
+        public ActionResult ListRentals(string sortOrder)
         {
-            var rentalList = context.Rentals.ToList();
+            ViewBag.MovieSortParm = String.IsNullOrEmpty(sortOrder) ? "Movie_desc" : "";
+            ViewBag.CustomerSortParm = sortOrder == "Customer" ? "Customer_desc" : "Customer";
+            List<RentalModel> rentalList;
+            //movieList ) 
+            rentalList = context.Rentals.ToList();
 
-            return View(rentalList);
+            List<RentalModelNames> rentalNamesList = new List<RentalModelNames>();
+
+            foreach (var item in rentalList)
+            {
+                RentalModelNames listNamesItem = new RentalModelNames();
+                listNamesItem.CustomerName = context.Customers.Find(item.CustomerId).Name;
+                listNamesItem.MovieName = context.Movies.Find(item.MovieId).Name;
+                foreach (PropertyInfo prop in item.GetType().GetProperties())
+                {
+                    foreach (PropertyInfo propNames in listNamesItem.GetType().GetProperties())
+                    {
+                        if (propNames.Name == prop.Name)
+                        {
+                            propNames.SetValue(listNamesItem,prop.GetValue(item));
+                        }
+                    } 
+                }
+                rentalNamesList.Add(listNamesItem);
+            }
+
+            //foreach (var rentalModel in rentalList.OrderByDescending(s => s.MovieId)) ;
+
+            DB_Context ctx = new DB_Context();
+
+            switch (sortOrder)
+            {
+                case "Movie_desc":
+                    rentalNamesList.Sort((x, y) => x.MovieName.CompareTo(y.MovieName));
+                    break;
+                case "Customer":
+                    rentalNamesList.Sort((x, y) => y.CustomerName.CompareTo(x.CustomerName));
+                    break;
+                case "Customer_desc":
+                    rentalNamesList.Sort((x, y) => x.CustomerName.CompareTo(y.CustomerName));
+                    break;
+                default:
+                    rentalNamesList.Sort((x, y) => y.MovieName.CompareTo(x.MovieName));
+                    break;
+            }
+
+            return View(rentalNamesList);
         }
 
-        public ActionResult ListRentals()
-        {
-            var rentalList = context.Rentals.ToList();
+        //public ActionResult ListRentals()
+        //{
+        //    var rentalList = context.Rentals.ToList();
 
-            return View(rentalList);
-        }
+        //    return View(rentalList);
+        //}
 
         public ActionResult ListActiveRentals()
         {
@@ -78,7 +123,7 @@ namespace Videobutik1.Controllers
 
             foreach (var item in rentalList)
             {
-                if (item.ActualReturnDate == null && item.CustomerId==customerId)
+                if (item.ActualReturnDate == null && item.CustomerId == customerId)
                 {
                     activeRentalList.Add(item);
                 }

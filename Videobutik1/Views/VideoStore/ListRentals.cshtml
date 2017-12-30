@@ -1,5 +1,5 @@
 ﻿@using Videobutik1.Models
-@model IEnumerable<Videobutik1.Models.RentalModel>
+@model IEnumerable<Videobutik1.Models.RentalModelNames>
 
 @{
     ViewBag.Title = "All Rentals";
@@ -25,7 +25,7 @@
     <table class="table">
         <tr>
             <th>
-                <p>Movie</p>
+                @Html.ActionLink("Movie", "ListRentals", new { sortOrder = ViewBag.MovieSortParm })
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.RentalDate)
@@ -37,7 +37,7 @@
                 @Html.DisplayNameFor(model => model.ActualReturnDate)
             </th>
             <th>
-                <p>Customer Name</p>
+                @Html.ActionLink("Customer", "ListRentals", new { sortOrder = ViewBag.CustomerSortParm })
             </th>
             <th></th>
         </tr>

@@ -27,4 +27,12 @@ namespace Videobutik1.Models
 
     }
 
+    // This derived class is only used to easily implement sorting of customer and movie in the rental list, 
+    // since the names are not stored in the same table as the rentals in the database - in order to have normalized tables.
+    public class RentalModelNames : RentalModel
+    {
+        public string MovieName { get; set; }
+        public string CustomerName { get; set; }
+    }
+
 }
