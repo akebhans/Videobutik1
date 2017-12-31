@@ -199,9 +199,6 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\Filmer.cshtml" />
-    <Content Include="Views\Home\Customers.cshtml" />
-    <Content Include="Views\Home\Rentals.cshtml" />
     <Content Include="Views\VideoStore\ListMovies.cshtml" />
     <Content Include="Views\VideoStore\ListCustomers.cshtml" />
     <Content Include="Views\VideoStore\ListRentals.cshtml" />

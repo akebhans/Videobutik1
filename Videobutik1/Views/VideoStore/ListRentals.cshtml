@@ -50,7 +50,8 @@
             <tr style="background-color: @warningcolor">
 
                 <td>
-                    @Html.Action("RentalMovieDetails", new { MovieId = item.MovieId })
+                    @*@Html.Action("RentalMovieDetails", new { MovieId = item.MovieId })*@
+                    @Html.DisplayFor(modelItem => item.MovieName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.RentalDate)
@@ -62,7 +63,8 @@
                     @Html.DisplayFor(modelItem => item.ActualReturnDate)
                 </td>
                 <td>
-                    @Html.Action("RentalCustomerDetails", new { CustomerId = item.CustomerId })
+                    @*@Html.Action("RentalCustomerDetails", new { CustomerId = item.CustomerId })*@
+                    @Html.DisplayFor(modelItem => item.CustomerName)
                 </td>
                 @if (item.ActualReturnDate == null)
                 {
